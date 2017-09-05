@@ -99,6 +99,34 @@ function getPrismGeometry(h, w, l) {
   return geometry
 }
 
+function getCylinderGeometry(r, l) {
+  var divisions = 4
+  var angle = (Math.PI/2)/divisions
+  var geometry = new THREE.BufferGeometry()
+  var verts = new Float32Array((divisions+2)*3)
+  var indices = []
+
+  console.log(angle)
+  verts[0] = 0
+  verts[1] = 0
+  verts[2] = 0
+
+  for (var i=0; i <= divisions; i++) {
+    verts[i*3 +3] = Math.round((Math.cos(angle*i) * r)*100)/100
+    verts[i*3 +4] = Math.round((Math.sin(angle*i) * r)*100)/100
+    verts[i*3 +5] = 0
+    if (i < divisions) {
+      // fixme hacky
+      indices = indices.concat([0, i+1, i+2])
+    }
+  }
+
+  geometry.addAttribute('position', new THREE.BufferAttribute(verts, 3));
+  geometry.setIndex(indices)
+
+  return geometry
+}
+
 // cone
 
 // a-blocks component (c) 2017 Madlaina Kalunder
@@ -109,8 +137,8 @@ AFRAME.registerComponent('a-blocks', {
     height: { type: 'int', default: 1 },
     length: { type: 'int', default: 1 },
     shape: {
-      oneOf: ['box', 'prism'],
-      default: 'box'},
+      oneOf: ['box', 'prism', 'cylinder'],
+      default: 'cylinder'},
     color: {
       oneOf: ['green', 'blue', 'yellow', 'red'],
       default: 'red'
@@ -137,6 +165,9 @@ AFRAME.registerComponent('a-blocks', {
         break;
       case 'prism':
         geometry = getPrismGeometry(h, w, l)
+        break;
+      case 'cylinder':
+        geometry = getCylinderGeometry(w, l)
         break;
       default:
         geometry = getBoxGeometry(h, w, l)
