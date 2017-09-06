@@ -106,19 +106,20 @@ function getCylinderGeometry(r, l) {
   var verts = new Float32Array((divisions+2)*3)
   var indices = []
 
-  console.log(angle)
   verts[0] = 0
   verts[1] = 0
   verts[2] = 0
 
+  var idx = 3
   for (var i=0; i <= divisions; i++) {
-    verts[i*3 +3] = Math.round((Math.cos(angle*i) * r)*100)/100
-    verts[i*3 +4] = Math.round((Math.sin(angle*i) * r)*100)/100
-    verts[i*3 +5] = 0
+    verts[idx + 0] = Math.round((Math.cos(angle*i) * r)*100)/100
+    verts[idx + 1] = Math.round((Math.sin(angle*i) * r)*100)/100
+    verts[idx + 2] = 0
     if (i < divisions) {
       // fixme hacky
       indices = indices.concat([0, i+1, i+2])
     }
+    idx = idx + 3
   }
 
   geometry.addAttribute('position', new THREE.BufferAttribute(verts, 3));
